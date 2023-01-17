@@ -20,21 +20,47 @@ const filterGameDayMatchups = (gamesArr) => {
 }
 
 const getWeeklySchedule = async () => {
-  const week = [16, 17, 18, 19, 20, 21, 22]
+  // get command line arguments
+  const monthsStr = process.argv[3].split('=')[1].split(',')
+  const datesStr = process.argv[4].split('=')[1].split(',')
+  const dates = datesStr.map((day) => Number(day))
+  const months = monthsStr.map((month) => Number(month))
+  // initialize games array
   const games = []
-  for (const day of week) {
-    const getSchedule = await axios.get(
-      `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-01-${day}`
-    )
-    const schedule = getSchedule.data
-    const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
-
-    games.push({
-      date: schedule.dates[0].date,
-      totalGames: schedule.totalGames,
-      games: gameDayMatchups,
-    })
+  // loop through dates and get schedule for each day
+  for (const day of dates) {
+    // check date to ensure correct month is used
+    if (day <= dates[6]) {
+      const getSchedule = await axios.get(
+        `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-${months[1]}-${day}`
+      )
+      const schedule = getSchedule.data
+      if (schedule.dates.length === 0) {
+      } else {
+        const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
+        games.push({
+          date: schedule.dates[0].date,
+          totalGames: schedule.totalGames,
+          games: gameDayMatchups,
+        })
+      }
+    } else {
+      const getSchedule = await axios.get(
+        `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-${months[0]}-${day}`
+      )
+      const schedule = getSchedule.data
+      if (schedule.dates.length === 0) {
+      } else {
+        const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
+        games.push({
+          date: schedule.dates[0].date,
+          totalGames: schedule.totalGames,
+          games: gameDayMatchups,
+        })
+      }
+    }
   }
+  // return array of games fot the week
   return games
 }
 
@@ -104,14 +130,6 @@ const compareMatchUps = (teamInformation, weeklySchedule) => {
   const monday = weekDayMatchup(matchups[0], teamInformation)
 }
 
-const compile = async () => {
-  const weeklySchedule = await getWeeklySchedule()
-  const numOfGamesObj = getNumberOfGames(weeklySchedule)
-  const teamInformation = await teamInfo2(numOfGamesObj)
-  const singleTeam = teamInformation.filter((team) => {
-    return team.team === process.argv[2]
-  })
-  console.table(singleTeam[0])
-}
+const compile = async () => {}
 
 compile()

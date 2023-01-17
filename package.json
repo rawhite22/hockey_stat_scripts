@@ -1,5 +1,5 @@
 {
-  "name": "hckst",
+  "name": "@robert-white/hockey-stats",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,8 +10,7 @@
     "defenseman": "node positions/defenseman.js",
     "goalies": "node positions/goalies.js",
     "matchups": "node teams/matchups.js",
-    "weeklyReport": "node teams/weeklyReport",
-    "teamReport": "node teams/teamWeeklyReport"
+    "weeklyReport": "node teams/weeklyReport"
   },
   "type": "module",
   "author": "",

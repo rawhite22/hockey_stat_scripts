@@ -20,38 +20,47 @@ const filterGameDayMatchups = (gamesArr) => {
 }
 
 const getWeeklySchedule = async () => {
+  // get command line arguments
   const monthsStr = process.argv[2].split('=')[1].split(',')
   const datesStr = process.argv[3].split('=')[1].split(',')
   const dates = datesStr.map((day) => Number(day))
   const months = monthsStr.map((month) => Number(month))
+  // initialize games array
   const games = []
+  // loop through dates and get schedule for each day
   for (const day of dates) {
+    // check date to ensure correct month is used
     if (day <= dates[6]) {
-      const getSchedule = await axios.get(
-        `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-${months[0]}-${day}`
-      )
-      const schedule = getSchedule.data
-      const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
-
-      games.push({
-        date: schedule.dates[0].date,
-        totalGames: schedule.totalGames,
-        games: gameDayMatchups,
-      })
-    } else {
       const getSchedule = await axios.get(
         `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-${months[1]}-${day}`
       )
       const schedule = getSchedule.data
-      const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
-
-      games.push({
-        date: schedule.dates[0].date,
-        totalGames: schedule.totalGames,
-        games: gameDayMatchups,
-      })
+      if (schedule.dates.length === 0) {
+      } else {
+        const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
+        games.push({
+          date: schedule.dates[0].date,
+          totalGames: schedule.totalGames,
+          games: gameDayMatchups,
+        })
+      }
+    } else {
+      const getSchedule = await axios.get(
+        `https://statsapi.web.nhl.com/api/v1/schedule?date=2023-${months[0]}-${day}`
+      )
+      const schedule = getSchedule.data
+      if (schedule.dates.length === 0) {
+      } else {
+        const gameDayMatchups = filterGameDayMatchups(schedule.dates[0].games)
+        games.push({
+          date: schedule.dates[0].date,
+          totalGames: schedule.totalGames,
+          games: gameDayMatchups,
+        })
+      }
     }
   }
+  // return array of games fot the week
   return games
 }
 
@@ -82,8 +91,7 @@ const teamInfo2 = async (numOfGamesObj) => {
       team: teamStats.data.teams[0].name,
       games: arr[1],
       evg: teamStats.data.teams[0].teamStats[0].splits[0].stat.evGGARatio,
-      evgNote:
-        'evg is even strength goals for goals against average. The higher the number the better the team.',
+      evgNote: 'The higher the number the better the team at 5v5.',
       shotDifferential: Number(
         (
           teamStats.data.teams[0].teamStats[0].splits[0].stat.shotsPerGame -
