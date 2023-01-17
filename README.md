@@ -32,3 +32,9 @@
 'matchups' - returns matchup ratings for the current days games
 
 'weeklyReport months=1,2 dates=29,30,31,1,2,3,4' - returns information about each teams schedule based of the dates and months
+
+![alt text](/imgs/weekly_report_one_month.png)
+
+if days fall between months
+
+![alt text](/imgs/weekly_report_multiple_months.png)
