@@ -1,7 +1,7 @@
 {
   "name": "@robert-white/hockey-stats",
   "version": "1.0.0",
-  "description": "",
+  "description": "terminal commands to get up to date hockey stats",
   "main": "index.js",
   "scripts": {
     "center": "node positions/center.js",
